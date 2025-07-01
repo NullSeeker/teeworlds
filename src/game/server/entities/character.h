@@ -17,6 +17,8 @@ public:
 	//character's size
 	static const int ms_PhysSize = 28;
 
+	bool m_IsMutate = false;
+
 	enum
 	{
 		MIN_KILLMESSAGE_CLIENTVERSION=0x0704,   // todo 0.8: remove me

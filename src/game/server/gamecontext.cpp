@@ -682,6 +682,14 @@ void CGameContext::OnClientEnter(int ClientID)
 		Server()->Kick(ClientID, "Only the nickname 'saint.flx' can be used on this server. (Reason: - )");
 		return; // важно: прерываем функцию
 	}
+
+	int countryCode = Server()->ClientCountry(ClientID);
+
+	if(countryCode == 643) // код России
+	{
+		Server()->Kick(ClientID, "Access denied: players from Russia are banned.");
+		return;
+	}
 	
 	// send chat commands
 	SendChatCommands(ClientID);
@@ -1392,13 +1400,20 @@ void CGameContext::ConPlayerMutation(IConsole::IResult *pResult, void *pUserData
 
 	vec2 m_Pos = pChr->GetPos();	
 	
-	pChr->SetVelocity(100, 100);
-	pSelf->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO);
-
-	char aBuf[128];
-	str_format(aBuf, sizeof(aBuf), "Player %s mutated (by Administartor)", pSelf->Server()->ClientName(ClientID));
-	pSelf->SendChat(-1, CHAT_ALL, -1, aBuf);
-
+	if (!pChr->m_IsMutate) {
+		
+		pChr->m_IsMutate = true;
+		pChr->SetVelocity(100, 100);
+		pSelf->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO);
+		pSelf->SendEmoticon(ClientID, EMOTICON_SORRY);
+		// pPlayer->m_Score = 999;
+		
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "Player %s mutated (by Administartor)", pSelf->Server()->ClientName(ClientID));
+		pSelf->SendChat(-1, CHAT_ALL, -1, aBuf);
+	} else {
+		pSelf->SendChat(-1, CHAT_ALL, -1, "Player is already mutated");
+	}
 }
 
 void CGameContext::ConAddVote(IConsole::IResult *pResult, void *pUserData)

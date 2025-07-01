@@ -532,9 +532,18 @@ void CCharacter::Tick()
 	{
 		Die(m_pPlayer->GetCID(), WEAPON_WORLD);
 	}
-
 	// handle Weapons
 	HandleWeapons();
+
+
+	if(m_IsMutate)
+	{
+		// Увеличенная максимальная горизонтальная скорость
+		if(m_Core.m_Vel.x > 0 || m_Core.m_Vel.x < 0) {
+			m_Core.m_Vel.x *= 0;
+		}
+
+	}	
 }
 
 void CCharacter::TickDefered()

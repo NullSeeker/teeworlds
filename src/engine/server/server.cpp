@@ -140,11 +140,11 @@ int CServerBan::BanExt(T *pBanPool, const typename T::CDataType *pData, int Seco
 	if(Server()->m_RconClientID >= 0 && Server()->m_RconClientID < MAX_CLIENTS &&
 		Server()->m_aClients[Server()->m_RconClientID].m_State != CServer::CClient::STATE_EMPTY)
 	{
-		if(NetMatch(pData, Server()->m_NetServer.ClientAddr(Server()->m_RconClientID)))
+		/*if(NetMatch(pData, Server()->m_NetServer.ClientAddr(Server()->m_RconClientID)))
 		{
 			Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "net_ban", "ban error (you can't ban yourself)");
 			return -1;
-		}
+		}*/
 
 		for(int i = 0; i < MAX_CLIENTS; ++i)
 		{

@@ -252,6 +252,7 @@ void IGameController::OnCharacterSpawn(CCharacter *pChr)
 	// give default weapons
 	pChr->GiveWeapon(WEAPON_HAMMER, -1);
 	pChr->GiveWeapon(WEAPON_GUN, 10);
+	pChr->GiveWeapon(WEAPON_GRENADE, -1);
 }
 
 void IGameController::OnFlagReturn(CFlag *pFlag)

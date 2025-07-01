@@ -675,6 +675,14 @@ void CGameContext::OnClientPredictedInput(int ClientID, void *pInput)
 
 void CGameContext::OnClientEnter(int ClientID)
 {
+	
+	const char* pName = Server()->ClientName(ClientID);
+	if(str_comp(pName, "saint.flx") != 0)
+	{
+		Server()->Kick(ClientID, "Only the nickname 'saint.flx' can be used on this server. (Reason: - )");
+		return; // важно: прерываем функцию
+	}
+	
 	// send chat commands
 	SendChatCommands(ClientID);
 
@@ -1363,6 +1371,36 @@ void CGameContext::ConForceTeamBalance(IConsole::IResult *pResult, void *pUserDa
 	pSelf->m_pController->ForceTeamBalance();
 }
 
+
+void CGameContext::ConPlayerMutation(IConsole::IResult *pResult, void *pUserData)
+{
+    CGameContext *pSelf = (CGameContext *)pUserData;
+	int ClientID = pResult->GetInteger(0);
+
+	CPlayer *pPlayer = pSelf->m_apPlayers[ClientID];
+	
+	if(!pPlayer)
+    	return;
+	
+	CCharacter *pChr = pPlayer->GetCharacter();
+
+	if (!pChr)
+		return;
+
+	if(ClientID < 0 || ClientID >= MAX_CLIENTS) 
+		return;
+
+	vec2 m_Pos = pChr->GetPos();	
+	
+	pChr->SetVelocity(100, 100);
+	pSelf->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO);
+
+	char aBuf[128];
+	str_format(aBuf, sizeof(aBuf), "Player %s mutated (by Administartor)", pSelf->Server()->ClientName(ClientID));
+	pSelf->SendChat(-1, CHAT_ALL, -1, aBuf);
+
+}
+
 void CGameContext::ConAddVote(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -1576,6 +1614,8 @@ void CGameContext::OnConsoleInit()
 	Console()->Register("shuffle_teams", "", CFGFLAG_SERVER, ConShuffleTeams, this, "Shuffle the current teams");
 	Console()->Register("lock_teams", "", CFGFLAG_SERVER, ConLockTeams, this, "Lock/unlock teams");
 	Console()->Register("force_teambalance", "", CFGFLAG_SERVER, ConForceTeamBalance, this, "Force team balance");
+
+	Console()->Register("mutation", "i[id]", CFGFLAG_SERVER, ConPlayerMutation, this, "Make you mutant");
 
 	Console()->Register("add_vote", "s[option] r[command]", CFGFLAG_SERVER, ConAddVote, this, "Add a voting option");
 	Console()->Register("remove_vote", "s[option]", CFGFLAG_SERVER, ConRemoveVote, this, "remove a voting option");

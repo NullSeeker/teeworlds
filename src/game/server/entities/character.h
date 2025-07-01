@@ -24,6 +24,17 @@ public:
 
 	CCharacter(CGameWorld *pWorld);
 
+	void SetVelocity(float x, float y)
+    {
+        m_Core.m_Vel.x = x;
+        m_Core.m_Vel.y = y;
+    }
+
+	void SetPosition(float x, float y)
+	{
+		m_Core.m_Pos = vec2(x, y);
+	}
+
 	virtual void Reset();
 	virtual void Destroy();
 	virtual void Tick();
